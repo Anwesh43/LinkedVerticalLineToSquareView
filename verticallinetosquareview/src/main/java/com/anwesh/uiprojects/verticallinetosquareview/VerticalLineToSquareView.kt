@@ -22,6 +22,7 @@ val strokeFactor : Int = 90
 val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#311B92")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 20
 
 fun Int.inverse() : Float = 1f / this
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
@@ -52,8 +53,8 @@ fun Canvas.drawVerticalLineToSquare(sc1 : Float, sc2 : Float, size : Float, pain
         save()
         rotate(90f * j.sf() * sc1.divideScale(j, lines))
         drawLine(0f, 0f, 0f, -size, paint)
-        drawSquare(size, sc2j, j, paint)
         restore()
+        drawSquare(size, sc2j, j, paint)
     }
 }
 
@@ -117,7 +118,7 @@ class VerticalLineToSquareView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
@@ -234,7 +235,7 @@ class VerticalLineToSquareView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : VerticalLineToSquareView {
             val view : VerticalLineToSquareView = VerticalLineToSquareView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
