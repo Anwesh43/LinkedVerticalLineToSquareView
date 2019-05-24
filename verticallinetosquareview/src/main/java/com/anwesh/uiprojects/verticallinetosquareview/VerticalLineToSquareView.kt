@@ -57,7 +57,7 @@ fun Canvas.drawVerticalLineToSquare(sc1 : Float, sc2 : Float, size : Float, pain
     }
 }
 
-fun Canvas.drawVLTS(i : Int, scale : Float, paint : Paint) {
+fun Canvas.drawVLTSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val sc1 : Float = scale.divideScale(0, 2)
@@ -135,6 +135,50 @@ class VerticalLineToSquareView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class VLTSNode(var i : Int, val state : State = State()) {
+
+        private var next : VLTSNode? = null
+        private var prev : VLTSNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = VLTSNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawVLTSNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : VLTSNode {
+            var curr : VLTSNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
