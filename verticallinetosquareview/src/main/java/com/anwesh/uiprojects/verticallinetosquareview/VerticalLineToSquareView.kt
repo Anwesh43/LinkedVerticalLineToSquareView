@@ -228,4 +228,13 @@ class VerticalLineToSquareView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : VerticalLineToSquareView {
+            val view : VerticalLineToSquareView = VerticalLineToSquareView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
