@@ -11,6 +11,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.app.Activity
 import android.content.Context
+import android.graphics.RectF
 
 val nodes : Int = 5
 val lines : Int = 2
@@ -33,3 +34,42 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float {
     return mirrorValue(a, b) * dir * scGap
 }
+fun Int.sf() : Float = 1f - 2 * this
+
+fun Canvas.drawSquare(size : Float, sc : Float, i : Int, paint : Paint) {
+    for (j in 0..(squares - 1)) {
+        save()
+        translate(-size + size * i, 0f)
+        scale(1f, 1f - 2 * j)
+        drawRect(RectF(0f, 0f, size, size * sc.divideScale(j, lines)), paint)
+        restore()
+    }
+}
+
+fun Canvas.drawVerticalLineToSquare(sc1 : Float, sc2 : Float, size : Float, paint : Paint) {
+    for (j in 0..(lines - 1)) {
+        val sc2j : Float = sc2.divideScale(j, lines)
+        save()
+        rotate(90f * j.sf() * sc1.divideScale(j, lines))
+        drawLine(0f, 0f, 0f, -size, paint)
+        drawSquare(size, sc2j, j, paint)
+        restore()
+    }
+}
+
+fun Canvas.drawVLTS(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val gap : Float = h / (nodes + 1)
+    val size : Float = gap / sizeFactor
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    drawVerticalLineToSquare(sc1, sc2, size, paint)
+    restore()
+}
+
